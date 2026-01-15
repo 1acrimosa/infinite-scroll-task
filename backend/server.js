@@ -80,8 +80,6 @@ app.post('/api/sort', (req, res) => {
     res.json({ ok: true });
 });
 
-app.listen(PORT, () => console.log(`Backend: http://localhost:${PORT}`));
-
 app.get('/', (req, res) => {
     res.json({
         message: 'API работает! Тест:',
@@ -89,3 +87,6 @@ app.get('/', (req, res) => {
         left: 'http://localhost:3001/api/left?page=1&limit=5'
     });
 });
+
+app.listen(PORT, () => console.log(`Backend: http://localhost:${PORT}`));
+

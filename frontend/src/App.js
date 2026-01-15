@@ -4,7 +4,7 @@ import RightPanel from './RightPanel';
 import './App.css';
 
 function App() {
-    const backendUrl = 'http://localhost:3001/api';
+    const backendUrl = 'https://infinite-scroll-task.onrender.com/api';
     return (
         <div className="app">
             <div className="panels">
