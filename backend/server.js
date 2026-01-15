@@ -81,3 +81,11 @@ app.post('/api/sort', (req, res) => {
 });
 
 app.listen(PORT, () => console.log(`Backend: http://localhost:${PORT}`));
+
+app.get('/', (req, res) => {
+    res.json({
+        message: 'API работает! Тест:',
+        endpoints: ['/api/left', '/api/right', '/api/select', '/api/add', '/api/sort'],
+        left: 'http://localhost:3001/api/left?page=1&limit=5'
+    });
+});
