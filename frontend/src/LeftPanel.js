@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useQuery } from 'react-query';
 import axios from 'axios';
 import { debounce } from 'lodash.debounce';
@@ -6,44 +6,45 @@ import { debounce } from 'lodash.debounce';
 const LeftPanel = ({ backendUrl }) => {
     const [filter, setFilter] = useState('');
     const [page, setPage] = useState(1);
-    const limit = 20;
 
-    const { data: items = [], isLoading } = useQuery(
+    const { data: items = [], isLoading, refetch } = useQuery(
         ['left', filter, page],
-        () => axios.get(`${backendUrl}/left?filter=${filter}&page=${page}&limit=${limit}`).then(res => res.data)
+        () => axios.get(`${backendUrl}/left?filter=${filter}&page=${page}&limit=20`).then(res => res.data),
+        { keepPreviousData: true }
     );
 
-    const debouncedSetFilter = debounce((val) => {
-        setFilter(val);
+    const debouncedFilter = useCallback(debounce((value) => {
+        setFilter(value);
         setPage(1);
-    }, 300);
+    }, 300), []);
 
     const toggleSelect = async (id) => {
         await axios.post(`${backendUrl}/select`, { id });
-        window.location.reload(); // простой рефреш для demo
+        refetch();
     };
-
-    const loadMore = () => setPage(p => p + 1);
 
     return (
         <div className="panel">
             <div className="header">
+                <h3>Все элементы</h3>
                 <input
                     placeholder="Фильтр по ID"
-                    onChange={e => debouncedSetFilter(e.target.value)}
-                    style={{ width: '100%' }}
+                    onChange={e => debouncedFilter(e.target.value)}
+                    style={{ width: '100%', padding: '5px' }}
                 />
             </div>
             <div className="list">
-                {isLoading ? 'Loading...' : (
-                    <ul style={{ listStyle: 'none', padding: 0 }}>
+                {isLoading ? 'Загрузка...' : (
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                         {items.map(item => (
-                            <li key={item.id} style={{ padding: '10px', borderBottom: '1px solid #eee', display: 'flex' }}>
+                            <li key={item.id} className="item">
                                 <input type="checkbox" onChange={() => toggleSelect(item.id)} />
-                                <span style={{ marginLeft: 10 }}>ID: {item.id}</span>
+                                <span>ID: {item.id}</span>
                             </li>
                         ))}
-                        <button onClick={loadMore} style={{ width: '100%' }}>Load more</button>
+                        <button onClick={() => setPage(p => p + 1)} style={{ width: '100%', padding: '10px' }}>
+                            Загрузить еще
+                        </button>
                     </ul>
                 )}
             </div>
