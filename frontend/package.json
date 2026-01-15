@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@hello-pangea/dnd": "^18.0.1",
+    "axios": "^1.13.2",
+    "lodash.debounce": "^4.0.8",
+    "react-beautiful-dnd": "^13.1.1",
+    "react-query": "^3.39.3",
+    "react-window": "^2.2.5"
+  }
+}

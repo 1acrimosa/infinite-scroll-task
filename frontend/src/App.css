@@ -1,0 +1,5 @@
+.app { display: flex; height: 100vh; }
+.panels { display: flex; flex: 1; }
+.panel { flex: 1; border: 1px solid #ccc; margin: 10px; display: flex; flex-direction: column; }
+.header { padding: 10px; border-bottom: 1px solid #ccc; }
+.list { flex: 1; overflow: auto; }
