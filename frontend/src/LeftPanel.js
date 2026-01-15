@@ -1,26 +1,37 @@
-import React, { useState, useCallback } from 'react';
-import { useQuery } from 'react-query';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { debounce } from 'lodash.debounce';
 
 const LeftPanel = ({ backendUrl }) => {
     const [filter, setFilter] = useState('');
     const [page, setPage] = useState(1);
+    const [items, setItems] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-    const { data: items = [], isLoading, refetch } = useQuery(
-        ['left', filter, page],
-        () => axios.get(`${backendUrl}/left?filter=${filter}&page=${page}&limit=20`).then(res => res.data),
-        { keepPreviousData: true }
-    );
+    const fetchItems = async () => {
+        setLoading(true);
+        try {
+            const res = await axios.get(`${backendUrl}/left?filter=${filter}&page=${page}&limit=20`);
+            setItems(res.data);
+        } catch (e) {
+            console.error(e);
+        }
+        setLoading(false);
+    };
 
-    const debouncedFilter = useCallback(debounce((value) => {
-        setFilter(value);
-        setPage(1);
-    }, 300), []);
+    useEffect(() => {
+        fetchItems();
+    }, [filter, page]);
+
+    const debouncedFilter = useCallback((value) => {
+        setTimeout(() => {
+            setFilter(value);
+            setPage(1);
+        }, 300);
+    }, []);
 
     const toggleSelect = async (id) => {
         await axios.post(`${backendUrl}/select`, { id });
-        refetch();
+        fetchItems(); // обновить
     };
 
     return (
@@ -34,7 +45,7 @@ const LeftPanel = ({ backendUrl }) => {
                 />
             </div>
             <div className="list">
-                {isLoading ? 'Загрузка...' : (
+                {loading ? 'Загрузка...' : (
                     <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                         {items.map(item => (
                             <li key={item.id} className="item">
