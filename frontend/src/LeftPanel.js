@@ -41,12 +41,22 @@ const LeftPanel = ({ backendUrl }) => {
                 <input
                     placeholder="Фильтр по ID"
                     onChange={e => debouncedFilter(e.target.value)}
-                    style={{ width: '100%', padding: '5px' }}
+                    style={{width: '100%', padding: '5px'}}
+                />
+                <input
+                    placeholder="Новый ID"
+                    onKeyDown={e => {
+                        if (e.key === 'Enter') {
+                            axios.post(`${backendUrl}/add`, {id: e.target.value});
+                            e.target.value = '';
+                        }
+                    }}
+                    style={{width: '100%', padding: '5px', marginTop: '5px'}}
                 />
             </div>
             <div className="list">
                 {loading ? 'Загрузка...' : (
-                    <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                    <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
                         {items.map(item => (
                             <li key={item.id} className="item">
                                 <input type="checkbox" onChange={() => toggleSelect(item.id)} />
